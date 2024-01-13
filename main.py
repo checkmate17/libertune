@@ -5,10 +5,13 @@ import uvicorn
 from pydantic import BaseModel
 from typing import List, Dict, Optional, Union
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from libertune.adapter.base import Adapter
-from hugging
+from libertune.model.mistral import MistralConfig, configuration_mistral, modeling_mistral, convert_mistral_weights_to_hf
+from libertune.model.mixtral import MixtralConfig, configuration_mixtral, modeling_mixtral, convert_mixtral_weights_to_hf
+
 
 app = FastAPI()
 
@@ -88,7 +91,7 @@ class TrainAdapterRequest(BaseModel):
     data_filepath: str
     config: TrainAdapterConfig
     
-@app.get('/adapter')
+@app.post('/adapter')
 def trainAdapter(train_adapter_request: TrainAdapterRequest):
     if not train_adapter_request.config:
         raise ValueError("Missing config")
@@ -100,10 +103,48 @@ def trainAdapter(train_adapter_request: TrainAdapterRequest):
             dropout=train_adapter_request.config.dropout=0.1,
         )
         adapter.build()
+        return JSONResponse(content=adapter.to_json_string(), status_code=200)
     except Exception as e:
         print(e)
+        return JSONResponse(content=str(e), status_code=500)
 
 
+
+@app.post("/mixtral/config")
+def configure_mixtral(mixtral_config_request: MixtralConfig):
+    try:
+        config = configuration_mixtral.MixtralConfig(**mixtral_config_request.dict())
+        print(config)
+
+        return JSONResponse(content=config.to_json_string(), status_code=200)
+    except Exception as e:
+        print(e)
+        return JSONResponse(content=str(e), status_code=500)
+
+@app.post("/mixtral/model")
+def modeling_mixtral(mixtral_model_request: MixtralConfig):
+    try:
+        model = modeling_mixtral.MixtralModel(config=mixtral_model_request)
+        print(model)
+
+        return JSONResponse(content=model.to_json_string(), status_code=200)
+    except Exception as e:
+        print(e)
+        return JSONResponse(content=str(e), status_code=500)
+
+@app.post("/mixtral/weights")
+def load_mixtral_weights(mixtral_weights_request: MistralConfig):
+    try:
+        model = modeling_mistral.MistralForCausalLM.from_pretrained(mixtral_weights_request.config.model_name_or_path)
+        print(model)
+
+        
+
+        return JSONResponse(content=model.to_json_string(), status_code=200)
+    except Exception as e:
+        print(e)
+        return JSONResponse(content=str(e), status_code=500)
+    
 
 
 if __name__ == "__main__":
