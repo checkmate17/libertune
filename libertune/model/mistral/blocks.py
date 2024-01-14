@@ -21,8 +21,7 @@
 import inspect
 import math
 import warnings
-from typing import List, Optional, Tuple, Union
-
+from typing import *
 import torch
 import torch.nn.functional as F
 import torch.utils.checkpoint
@@ -518,13 +517,6 @@ def _create_4d_causal_attention_mask(
 
     return attention_mask
 
-
-
-
-
-from typing import Any, Dict, List, Optional, Tuple
-
-import torch
 
 class Cache:
     """
