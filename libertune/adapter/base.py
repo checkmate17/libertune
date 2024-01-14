@@ -28,7 +28,10 @@ class Adapter(nn.Module):
             nn.Linear(self.output_dim, self.input_dim),
         )
 
-    
+    def forward(self, x):
+        return self.adapter(x) + x
+
+
 
 
 
