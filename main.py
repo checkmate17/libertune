@@ -1,23 +1,40 @@
 import os
-import json
 import requests
 import uvicorn
 from pydantic import BaseModel
-from typing import List, Dict, Optional, Union, Any
+from typing import Optional, Union
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from fastapi.exception_handlers import http_exception_handler
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from libertune.adapter.core_adapter import Adapter
-from libertune.model.mistral import MistralConfig, configuration_mistral, MistralModel
-from libertune.model.mixtral import MixtralConfig, configuration_mixtral, MixtralModel
+from libertune.model.mistral import MistralConfig, MistralModel
+from libertune.model.mistral.configuration_mistral import (
+    MISTRAL_PRETRAINED_CONFIG_ARCHIVE_MAP,
+)
+from libertune.model.mixtral import MixtralConfig, MixtralModel
+from libertune.model.mixtral.configuration_mixtral import (
+    MIXTRAL_PRETRAINED_CONFIG_ARCHIVE_MAP,
+)
+
+MISTRAL_PRETRAINED_CONFIG_ARCHIVE_MAP[
+    "mistralai/Mistral-7B-v0.1"
+] = "https://huggingface.co/mistralai/Mistral-7B-v0.1/resolve/main/config.json"
+MISTRAL_PRETRAINED_CONFIG_ARCHIVE_MAP[
+    "Mistral-7B-Instruct-v0.2"
+] = "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2"
+MIXTRAL_PRETRAINED_CONFIG_ARCHIVE_MAP[
+    "mistral-ai/Mixtral-8x7B"
+] = "https://huggingface.co/mistral-ai/Mixtral-8x7B/resolve/main/config.json"
+MIXTRAL_PRETRAINED_CONFIG_ARCHIVE_MAP[
+    "Mixtral-8x7B-Instruct-v0.1"
+] = "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1/resolve/main/config.json"
 
 
 app = FastAPI()
 
 app.add_middleware(
-    CORSMiddleware,
+    middleware_class=CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
@@ -48,7 +65,7 @@ def root():
 def download_file(load_data_request: Load_Data_Request):
     url = load_data_request.data
     filename = url.split("/")[-1]
-    response = requests.get(url)
+    response = requests.get(url, timeout=6000)
     # Check if the request was successful
     if response.status_code == 200:
         # Open the file in binary write mode and save the content
@@ -69,7 +86,7 @@ class HuggingFaceRequest(BaseModel):
 def hugging_face_download(hugging_face_request: HuggingFaceRequest):
     url = hugging_face_request.data_filepath
     filename = url.split("/")[-1]
-    response = requests.get(url)
+    response = requests.get(url, timeout=6000)
     # Check if the request was successful
     if response.status_code == 200:
         # Open the file in binary write mode and save the content
@@ -78,6 +95,18 @@ def hugging_face_download(hugging_face_request: HuggingFaceRequest):
         print(f"File downloaded successfully and saved as {filename}")
     else:
         print(f"Failed to download the file. Status code: {response.status_code}")
+
+
+@app.get("/get_models")
+def get_model_list():
+    try:
+        models = {
+            "Mistral": list(MISTRAL_PRETRAINED_CONFIG_ARCHIVE_MAP.keys()),
+            "Mixtral": list(MIXTRAL_PRETRAINED_CONFIG_ARCHIVE_MAP.keys()),
+        }
+        return JSONResponse(content=models, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
 class TrainModelRequest(BaseModel):
@@ -135,9 +164,9 @@ def configure_mixtral(config_request: Union[MixtralConfig, MistralConfig]):
     config = None
     try:
         if config_request.model_type == "mixtral":
-            config = configuration_mixtral.MixtralConfig(**config_request.dict())
+            config = MixtralConfig(**config_request.dict())
         if config_request.model_type == "mistral":
-            config = configuration_mistral.MistralConfig(**config_request.dict())
+            config = MistralConfig(**config_request.dict())
         print(config)
 
         return JSONResponse(content=config, status_code=200)
