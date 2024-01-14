@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "libertune"
+version = "0.1.0"
+description = "model low rank adapter training"
+authors = ["CommuneAI"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.109.0"
+uvicorn = "^0.25.0"
+requests = "^2.31.0"
+loguru = "^0.7.2"
+huggingface-cli = "^0.1"
+torch = "^2.1.2"
+transformers = "^4.36.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

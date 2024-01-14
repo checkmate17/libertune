@@ -520,7 +520,6 @@ def _create_4d_causal_attention_mask(
 
 
 
-from .configuration_mistral import Dict
 
 
 from typing import Any, Dict, List, Optional, Tuple
@@ -1175,7 +1174,7 @@ if is_flash_attn_2_available():
     _flash_supports_window_size = "window_size" in list(inspect.signature(flash_attn_func).parameters)
 
 
-logger = logging.get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 _CONFIG_FOR_DOC = "Dict"
 

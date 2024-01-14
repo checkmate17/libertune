@@ -33,7 +33,7 @@ from packaging import version
 
 import logging
 
-logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 # TODO: This doesn't work for all packages (`bs4`, `faiss`, etc.) Talk to Sylvain to see how to do with it better.
