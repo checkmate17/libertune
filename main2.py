@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from libertune.adapter.core_adapter import Adapter
+from libertune.adapter.adapter import Adapter
 from libertune.model.mistral import MistralConfig, MistralModel
 from libertune.model.mistral.configuration_mistral import (
     MISTRAL_PRETRAINED_CONFIG_ARCHIVE_MAP,

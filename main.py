@@ -7,7 +7,10 @@ model = MistralModel(num_hidden_layers=1, intermediate_size=10)
 adapter = SwappapleAdapter()
 
 input = "whadup fam "
-model_output_string = model.forward(input) # [batch, seq_len, embedding_size]
+server_response = model.forward(input) # string
+print(server_response)
+
+server_embedding = model.get_embedding(input) # numpy array
 
 
 
