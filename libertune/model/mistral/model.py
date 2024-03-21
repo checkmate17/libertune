@@ -1,7 +1,6 @@
 
 import torch
 import torch.nn as nn
-import commune as c
 from .blocks import  (
     _prepare_4d_causal_attention_mask_for_sdpa, 
     _prepare_4d_causal_attention_mask,

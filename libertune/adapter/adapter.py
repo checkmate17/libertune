@@ -1,8 +1,7 @@
 
 import torch
 import torch.nn as nn
-import commune as c
-from .blocks import  (
+from libertune.model.mistral.blocks import  (
 
     MistralRMSNorm,
     MistralDecoderLayer,

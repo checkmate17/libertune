@@ -26,7 +26,8 @@ import torch
 import torch.nn.functional as F
 import torch.utils.checkpoint
 from torch import nn
-from .activations import ACT2FN
+# from .activations import ACT2FN
+from libertune.model.mistral.activations import ACT2FN
 import logging
 from dataclasses import dataclass
 from typing import *

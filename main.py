@@ -1,7 +1,8 @@
-from libertune.model import MistralModel
-from libertune.adapter import SwappapleAdapter
+from libertune.model.mistral import *
+from libertune.adapter import *
+# from libertune.model import MistralModel
+# from libertune.adapter import SwappapleAdapter
 
-import commune as c
 model = MistralModel(num_hidden_layers=1, intermediate_size=10)
 
 adapter = SwappapleAdapter()

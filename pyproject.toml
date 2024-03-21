@@ -15,6 +15,7 @@ loguru = "^0.7.2"
 huggingface-cli = "^0.1"
 torch = "^2.1.2"
 transformers = "^4.36.2"
+munch = "^4.0.0"
 
 
 [build-system]
